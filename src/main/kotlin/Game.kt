@@ -63,9 +63,11 @@ fun main(args: Array<String>) {
     val dealer = Dealer()
     val players = args.map { EnhancedStrategyPlayer(it) }
 
+    RankValueRegistry.fill()
+
     var continueGame = true
     while (continueGame) {
-        deck.spreadTo(players + dealer)
+        deck spreadTo (players + dealer)
         printlnln(dealer)
 
         if (!dealer.blackjack) for (player in players) playerTurn(player, deck, dealer.topCard.rank.rankValue)
@@ -73,13 +75,13 @@ fun main(args: Array<String>) {
         dealer.reveal()
         playerTurn(dealer, deck)
 
-        val (winners, losers) = players.partition { it.beats(dealer) }
+        val (winners, losers) = players.partition { it beats dealer }
 
         println(dealer)
         println("Winners: ${if (winners.isEmpty()) "none" else winners.toString()}")
         printlnln("Losers: ${if (losers.isEmpty()) "none" else losers.toString()}")
 
-        (players + dealer).map { it.reset() }
+        (players + dealer).forEach(Player::reset)
         continueGame = checkToContinue()
     }
 }

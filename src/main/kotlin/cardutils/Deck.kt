@@ -33,16 +33,18 @@ class Deck {
 
     private fun shuffle() = Collections.shuffle(cards)
 
-    fun deal(): Card {
-        val card: Card = cards.pop()
-        if (empty) reset()
-        return card
-    }
-
-    fun spreadTo(players: List<Player>) {
+    infix fun spreadTo(players: List<Player>) {
         for (player in players) {
             player.takeFrom(this)
             player.takeFrom(this)
         }
+    }
+
+    fun deal(): Card {
+        val card: Card = cards.pop()
+        if (empty) reset()
+
+        RankValueRegistry.adjust(card.rank.rankValue)
+        return card
     }
 }
