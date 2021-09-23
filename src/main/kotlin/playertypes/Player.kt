@@ -59,12 +59,17 @@ abstract class Player(val name: String) {
         active = 0
     }
 
-    open fun takeFrom(deck: Deck, next: Boolean = false): Card {
+    infix fun beats(dealer: Dealer): Boolean = when {
+        dealer.blackjack -> false
+        dealer.busted -> scores.any { it <= 21 }
+        else -> scores.any { it in dealer.score..21 }
+    }
+
+    fun takeFrom(deck: Deck, next: Boolean = false): Card {
         val hand = if (next) hands[active + 1] else hands[active]
 
         val card = deck.deal()
         hand += card
-        EnhancedStrategyPlayer.adjust(card.rank.rankValue)
 
         if (hand.sumOf { it.value } > 21) hand.find { it.value == 11 }?.value = 1
         return card
@@ -86,11 +91,5 @@ abstract class Player(val name: String) {
             return true
         }
         return false
-    }
-
-    fun beats(dealer: Dealer): Boolean = when {
-        dealer.blackjack -> false
-        dealer.busted -> scores.any { it <= 21 }
-        else -> scores.any { it in dealer.score..21 }
     }
 }
